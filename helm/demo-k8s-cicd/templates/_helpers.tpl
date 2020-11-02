@@ -1,4 +1,3 @@
-{{/* vim: set filetype=mustache: */}}
 {{/*
 Expand the name of the chart.
 */}}
@@ -29,35 +28,4 @@ Create chart name and version as used by the chart label.
 */}}
 {{- define "demo-k8s-cicd.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
-{{- end }}
-
-{{/*
-Common labels
-*/}}
-{{- define "demo-k8s-cicd.labels" -}}
-helm.sh/chart: {{ include "demo-k8s-cicd.chart" . }}
-{{ include "demo-k8s-cicd.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- end }}
-
-{{/*
-Selector labels
-*/}}
-{{- define "demo-k8s-cicd.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "demo-k8s-cicd.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end }}
-
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "demo-k8s-cicd.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "demo-k8s-cicd.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
 {{- end }}
