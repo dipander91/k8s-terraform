@@ -30,6 +30,10 @@ data "aws_iam_policy" "AmazonEC2ContainerRegistryReadOnly" {
   arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
+data "aws_iam_policy" "AmazonSSMWorkerNodePolicy" {
+  arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
 provider "kubernetes" {
   host                   = data.aws_eks_cluster.cluster.endpoint
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
@@ -38,8 +42,13 @@ provider "kubernetes" {
   version                = "~> 1.11"
 }
 
+module terraform-module-aws-ecr {
+  source = "../../terraform-modules/terraform-module-aws-ecr/"
+  ecr_repo_names = var.ecr_repo_list
+}
+
 module alb-ingress-controller-policy {
-  source = "../modules/terraform-module-aws-iam-policy/"
+  source = "../../terraform-modules/terraform-module-aws-iam-policy/"
 
   policy_name        = "alb-ingress-controller-policy"
   policy_description = "Policy for ALB Ingress Controller"
@@ -47,7 +56,7 @@ module alb-ingress-controller-policy {
 }
 
 module kube2iam-policy {
-  source = "../../modules/terraform-module-aws-iam-policy/"
+  source = "../../terraform-modules/terraform-module-aws-iam-policy/"
 
   policy_name        = "kube2iam-policy"
   policy_description = "Policy for Kube2Iam"
@@ -55,7 +64,7 @@ module kube2iam-policy {
 }
 
 module external-dns-policy {
-  source = "../../modules/terraform-module-aws-iam-policy/"
+  source = "../../terraform-modules/terraform-module-aws-iam-policy/"
 
   policy_name        = "external-dns-policy"
   policy_description = "Policy for External DNS controller"
@@ -63,7 +72,7 @@ module external-dns-policy {
 }
 
 module eks_worker_role {
-  source = "../../modules/terraform-module-aws-iam-role/"
+  source = "../../terraform-modules/terraform-module-aws-iam-role/"
 
   iam_role_name        = "eks_worker_role"
   iam_role_description = "Worker role for EKS node"
@@ -73,7 +82,8 @@ module eks_worker_role {
     data.aws_iam_policy.AmazonEKSWorkerNodePolicy.arn,
     module.kube2iam-policy.policy_arn,
     data.aws_iam_policy.AmazonEKS_CNI_Policy.arn,
-  data.aws_iam_policy.AmazonEC2ContainerRegistryReadOnly.arn]
+  data.aws_iam_policy.AmazonEC2ContainerRegistryReadOnly.arn,
+  data.aws_iam_policy.AmazonSSMWorkerNodePolicy.arn]
 }
 
 resource "aws_iam_instance_profile" "eks_worker_instance_profile" {
@@ -102,10 +112,11 @@ module "eks" {
       asg_min_size              = 1
       asg_max_size              = 2
       asg_desired_capacity      = 1
-      kubelet_extra_args        = "--node-labels=kubernetes.io/lifecycle=spot"
+      key_name                  = var.enable_ssh ? var.sshkey : null
       public_ip                 = false
       iam_instance_profile_name = aws_iam_instance_profile.eks_worker_instance_profile.name
       tags                      = local.asg_tags
+      depends_on                = [aws_iam_instance_profile.eks_worker_instance_profile]
     }
   ]
 

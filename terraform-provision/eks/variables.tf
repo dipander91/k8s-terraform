@@ -2,6 +2,22 @@ variable "region" {
   default = "eu-west-1"
 }
 
+variable "enable_ssh" {
+  type = bool
+  default = true
+}
+
+variable "sshkey" {
+  default = "eksdip"
+}
+
+variable "ecr_repo_list" {
+  description = "ECR repo name list"
+  type = list(string)
+
+  default = ["eks/dynamo","eks/api","eks/nodejs","eks/python","eks/webapp"]
+}
+
 variable "map_users" {
   description = "Additional IAM users to add to the aws-auth configmap."
   type = list(object({
@@ -51,7 +67,7 @@ locals {
      "value": true
   },
   {
-     "key": "k8s.io/cluster-autoscaler/test-eks-cluster",
+     "key": "k8s.io/cluster-autoscaler/demo-k8s-cicid-cluster",
      "propagate_at_launch": true,
      "value": "owned"
   }]

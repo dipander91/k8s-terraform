@@ -1,6 +1,6 @@
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "2.21.0"
+  version = "2.63.0"
   
   name = "eks-vpc"
   cidr = "10.0.0.0/16"
@@ -16,12 +16,12 @@ module "vpc" {
 
   private_subnet_tags = {
     "kubernetes.io/role/internal-elb" = 1
-    "kubernetes.io/cluster/test-eks-cluster" = "shared" 
+    "kubernetes.io/cluster/demo-k8s-cicid-cluster" = "shared" 
   }
 
   public_subnet_tags = {
     "kubernetes.io/role/elb" = 1
-    "kubernetes.io/cluster/test-eks-cluster" = "shared" 
+    "kubernetes.io/cluster/demo-k8s-cicid-cluster" = "shared" 
   }
 
   enable_dns_hostnames = true
