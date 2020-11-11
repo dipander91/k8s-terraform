@@ -4,9 +4,6 @@ metadata:
   name: external-dns
   # If you're using Amazon EKS with IAM Roles for Service Accounts, specify the following annotation.
   # Otherwise, you may safely omit it.
-  annotations:
-    # Substitute your account ID and IAM service role name below.
-    eks.amazonaws.com/role-arn: eks_worker_role
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
@@ -62,11 +59,11 @@ spec:
         args:
         - --source=service
         - --source=ingress
-        - --domain-filter=external-dns-test.my-org.com # will make ExternalDNS see only the hosted zones matching provided domain, omit to process all available hosted zones
+        - --domain-filter=mirademo.com # will make ExternalDNS see only the hosted zones matching provided domain, omit to process all available hosted zones
         - --provider=aws
         - --policy=upsert-only # would prevent ExternalDNS from deleting any records, omit to enable full synchronization
         - --aws-zone-type=public # only look at public hosted zones (valid values are public, private or no value for both)
         - --registry=txt
-        - --txt-owner-id=my-hostedzone-identifier
+        - --txt-owner-id=Z3678PZQ7KOR69
       securityContext:
         fsGroup: 65534 # For ExternalDNS to be able to read Kubernetes and AWS token files
