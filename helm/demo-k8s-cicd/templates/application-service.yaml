@@ -5,7 +5,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "demo-k8s-cicd.fullname" $global }}-{{ $application.image.name }}-service
+  name: {{ $application.image.type }}-service
   namespace: {{ $global.Release.Namespace }}
 spec:
   ports:

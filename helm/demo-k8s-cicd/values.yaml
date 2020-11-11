@@ -2,21 +2,23 @@
 #########################################################
 #              DNS Details                              #
 #########################################################
+fullnameOverride: demorel
 dns:
-  hostname:
-  certificateARN:
+  hostname: my-app.mirademo.com
+  certificateARN: arn:aws:acm:eu-west-1:835483671006:certificate/94e78a84-f644-4605-a77a-b910a545f793
 
 applications:
 #########################################################
 #     Values for DB server Containers                   #
 #########################################################
   dbserver:
-    replicas:
+    replicas: 1
     image: 
-      repository: 
-      name: 
-      tag: 
-      pullPolicy:
+      repository: 835483671006.dkr.ecr.eu-west-1.amazonaws.com/eks
+      name: dynamo
+      type: dynamodb
+      tag: v1.0
+      pullPolicy: Always
     service:
       port: 8000
       scheme: http
@@ -26,12 +28,13 @@ applications:
 #     Values for springboot Containers                  #
 #########################################################
   springboot:
-    replicas:
+    replicas: 1
     image: 
-      repository: 
-      name: 
-      tag: 
-      pullPolicy: 
+      repository: 835483671006.dkr.ecr.eu-west-1.amazonaws.com/eks
+      name: api
+      type: springboot-ms-gateway
+      tag: v1.0
+      pullPolicy: Always 
     service:
       port: 8080
       scheme: http 
@@ -41,12 +44,13 @@ applications:
 #     Values for nginx Containers                  #
 #########################################################
   nginx:
-    replicas:
+    replicas: 1
     image: 
-      repository: 
-      name: 
-      tag: 
-      pullPolicy: 
+      repository: 835483671006.dkr.ecr.eu-west-1.amazonaws.com/eks
+      name: webapp
+      type: nginx 
+      tag: v1.0
+      pullPolicy: Always 
     service:
       port: 80
       scheme: http 
@@ -56,12 +60,13 @@ applications:
 #     Values for nodejs Containers                  #
 #########################################################
   nodejs:
-    replicas:
+    replicas: 1
     image: 
-      repository: 
-      name: 
-      tag: 
-      pullPolicy: 
+      repository: 835483671006.dkr.ecr.eu-west-1.amazonaws.com/eks 
+      name: nodejs
+      type: nodejs-backend
+      tag: v1.0
+      pullPolicy: Always 
     service:
       port: 4000
       scheme: http 
@@ -73,10 +78,11 @@ applications:
   python:
     replicas:
     image: 
-      repository: 
-      name: 
-      tag: 
-      pullPolicy: 
+      repository: 835483671006.dkr.ecr.eu-west-1.amazonaws.com/eks
+      name: python
+      type: python-backend
+      tag: v1.0
+      pullPolicy: Always 
     service:
       port: 5000
       scheme: http

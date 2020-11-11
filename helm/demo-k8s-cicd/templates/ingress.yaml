@@ -1,4 +1,4 @@
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: "{{ template "demo-k8s-cicd.fullname" . }}-ingress"
@@ -22,5 +22,5 @@ spec:
               servicePort: use-annotation
           - path: /*
             backend:
-              serviceName: {{ template "demo-k8s-cicd.fullname" $global }}-{{ .Values.applications.nginx.image.name }}-service
+              serviceName: {{ .Values.applications.nginx.image.type }}-service
               servicePort: {{ .Values.applications.nginx.service.port }}

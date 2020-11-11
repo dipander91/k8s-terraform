@@ -13,6 +13,11 @@ metadata:
     release: "{{ $global.Release.Name }}"   
 spec:
   replicas: {{ $application.replicas }}
+  selector:
+    matchLabels:
+      app: {{ template "demo-k8s-cicd.fullname" $global }}-{{ $application.image.name }}
+      chart: "{{ $global.Chart.Name }}-{{ $global.Chart.Version }}"
+      release: "{{ $global.Release.Name }}"
   template:
     metadata:
       labels:
