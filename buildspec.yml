@@ -14,6 +14,8 @@ env:
 phases:
   install: # Install AWS cli, kubectl (needed for Helm) and Helm
     commands:
+      - "ls -ltr"
+      - "IMAGE_TAG=$(source tags.txt && echo ${Image_Tag})"
       - "yum install -y awscli git python3"
       - "curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.9/2020-11-02/bin/darwin/amd64/aws-iam-authenticator"
       - "chmod +x ./aws-iam-authenticator"
@@ -24,10 +26,10 @@ phases:
       - "wget https://storage.googleapis.com/kubernetes-helm/helm-v2.14.0-linux-amd64.tar.gz -O helm.tar.gz; tar -xzf helm.tar.gz"
       - "chmod +x ./linux-amd64/helm"
       - "mv ./linux-amd64/helm /usr/bin/helm"
+      - echo "Cluster name is:" ${CLUSTER_NAME} "API Ecr repo is:" $API_ECR_REPO "DDB Ecr repo is:" $DDB_ECR_REPO "NodeJs Ecr repo is:" $NODEJS_ECR_REPO "Python Ecr repo is:"  $PYTHON_ECR_REPO "Webapp Ecr repo is:" $WEBAPP_ECR_REPO
   pre_build: # Add kubeconfig to access to EKS cluster, Also set the Image tag name
     commands:
       - "aws eks --region $REGION update-kubeconfig --name $CLUSTER_NAME"
-      - "IMAGE_TAG=$(source tags.txt && echo ${Image_Tag})"
   build: # Build Docker image and tag it with the commit sha
     commands:
       - cd microservices/api/ &&  docker build -t api:$IMAGE_TAG .
@@ -36,3 +38,4 @@ phases:
     commands:
       - $(aws ecr get-login --no-include-email --region ${REGION})
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$API_ECR_REPO:$IMAGE_TAG
+      
