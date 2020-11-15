@@ -22,9 +22,6 @@ phases:
        - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
        - chmod +x kubectl
        - mv ./kubectl /usr/bin/kubectl
-       - wget https://storage.googleapis.com/kubernetes-helm/helm-v2.14.0-linux-amd64.tar.gz -O helm.tar.gz; tar -xzf helm.tar.gz
-       - chmod +x ./linux-amd64/helm
-       - mv ./linux-amd64/helm /usr/bin/helm
        - echo "Cluster name is:" $CLUSTER_NAME " API Ecr repo is: " $API_ECR_REPO " DDB Ecr repo is: " $DDB_ECR_REPO " NodeJs Ecr repo is: " $NODEJS_ECR_REPO " Python Ecr repo is: "  $PYTHON_ECR_REPO " Webapp Ecr repo is: " $WEBAPP_ECR_REPO
   pre_build: # Add kubeconfig to access to EKS cluster, Also set the Image tag name
     commands:
