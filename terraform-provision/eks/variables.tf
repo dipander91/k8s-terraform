@@ -55,6 +55,11 @@ variable "map_roles" {
       username = "deploy role of code pipeline"
       groups   = ["system:masters"]
     },
+    {
+      rolearn  = "arn:aws:iam::835483671006:role/codebuild-role"
+      username = "deploy role of code build"
+      groups   = ["system:masters"]
+    }
   ]
 }
 
