@@ -4,6 +4,7 @@ env:
   variables:
     AWS_ACCOUNT_ID: "835483671006"
     REGION: "eu-west-1"
+    RELEASE_NAME: "myrel"
     CLUSTER_NAME: "demo-k8s-cicid-cluster"
     API_ECR_REPO: "eks/api"
     DDB__ECR_REPO: "eks/dynamo"
@@ -11,11 +12,12 @@ env:
     PYTHON_ECR_REPO: "eks/python"
     WEBAPP_ECR_REPO: "eks/webapp"
 
+
 phases:
   install: # Install AWS cli, kubectl (needed for Helm) and Helm
     commands:
       - "IMAGE_TAG=$(source ./tags.txt && echo ${Image_Tag})"
-      - "yum install -y awscli git python3"
+      - "yum install -y awscli git python3 docker"
       - "curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.9/2020-11-02/bin/darwin/amd64/aws-iam-authenticator"
       - "chmod +x ./aws-iam-authenticator"
       - "mkdir -p ~/bin && cp ./aws-iam-authenticator ~/bin/aws-iam-authenticator && export PATH=~/bin:$PATH"
@@ -37,3 +39,4 @@ phases:
     commands:
       - $(aws ecr get-login --no-include-email --region ${REGION})
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$API_ECR_REPO:$IMAGE_TAG
+      - "helm upgrade -i ${RELEASE_NAME} ./helm/demo-k8s-cicd/ --set .Values.applications.springboot.image.tag=$IMAGE_TAG"
