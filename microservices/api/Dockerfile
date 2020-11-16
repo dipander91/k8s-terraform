@@ -1,4 +1,4 @@
-FROM maven:3.6-jdk-8 AS build
+FROM 835483671006.dkr.ecr.eu-west-1.amazonaws.com/eks/api:maven3.6 AS build
 COPY src /usr/src/app/src  
 COPY pom.xml /usr/src/app  
 RUN mvn -f /usr/src/app/pom.xml clean install
