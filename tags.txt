@@ -1,1 +1,1 @@
-Image_Tag=v2.0
+Image_Tag=v3.0
