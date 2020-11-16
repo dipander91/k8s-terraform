@@ -4,7 +4,8 @@ env:
   variables:
     AWS_ACCOUNT_ID: "835483671006"
     REGION: "eu-west-1"
-    RELEASE_NAME: "myrel"
+    RELEASE_NAME: "devrelease"
+    NAMESPACE: "development"
     CLUSTER_NAME: "demo-k8s-cicid-cluster"
     API_ECR_REPO: "eks/api"
     DDB__ECR_REPO: "eks/dynamo"
@@ -40,4 +41,4 @@ phases:
   post_build: # Push the Docker image to the ECR
     commands:
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$API_ECR_REPO:$IMAGE_TAG
-      - cd ${BuildDir}/helm/ && helm upgrade -i ${RELEASE_NAME} ./demo-k8s-cicd --set .Values.applications.springboot.image.tag=$IMAGE_TAG
+      - cd ${BuildDir}/helm/ && helm upgrade -i ${RELEASE_NAME} ./demo-k8s-cicd --set .Values.applications.springboot.image.tag=$IMAGE_TAG --namespace $NAMESPACE
