@@ -2,7 +2,6 @@ version: 0.2
 
 env:
   variables:
-    AWS_ACCOUNT_ID: "835483671006"
     RELEASE_NAME: "devrelease"
     NAMESPACE: "development"
     CLUSTER_NAME: "demo-k8s-cicid-cluster"
@@ -27,7 +26,7 @@ phases:
       - "wget https://get.helm.sh/helm-v3.4.1-linux-amd64.tar.gz -O helm.tar.gz; tar -xzf helm.tar.gz"
       - "chmod +x ./linux-amd64/helm"
       - "mv ./linux-amd64/helm /usr/bin/helm"
-      - echo "Cluster name is:" ${CLUSTER_NAME} "API Ecr repo is:" $API_ECR_REPO "DDB Ecr repo is:" $DDB_ECR_REPO "NodeJs Ecr repo is:" $NODEJS_ECR_REPO "Python Ecr repo is:"  $PYTHON_ECR_REPO "Webapp Ecr repo is:" $WEBAPP_ECR_REPO "Image tag is:" $IMAGE_TAG
+      - echo "Cluster name is:" ${CLUSTER_NAME} "API Ecr repo is:" $API_ECR_REPO "DDB Ecr repo is:" $DDB_ECR_REPO "NodeJs Ecr repo is:" $NODEJS_ECR_REPO "Python Ecr repo is:"  $PYTHON_ECR_REPO "Webapp Ecr repo is:" $WEBAPP_ECR_REPO "Image tag is:" $IMAGE_TAG "Account id is:" $CODEBUILD_WEBHOOK_ACTOR_ACCOUNT_ID
   pre_build: # Add kubeconfig to access to EKS cluster, Also set the Image tag name
     commands:
       - "aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $CLUSTER_NAME"
@@ -35,8 +34,8 @@ phases:
     commands:
       - $(aws ecr get-login --no-include-email --region ${AWS_DEFAULT_REGION})
       - cd ${CODEBUILD_SRC_DIR}/microservices/api/ &&  docker build -t api:$IMAGE_TAG .
-      - docker tag api:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$API_ECR_REPO:$IMAGE_TAG
+      - docker tag api:$IMAGE_TAG $CODEBUILD_WEBHOOK_ACTOR_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$API_ECR_REPO:$IMAGE_TAG
   post_build: # Push the Docker image to the ECR
     commands:
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$API_ECR_REPO:$IMAGE_TAG
+      - docker push $CODEBUILD_WEBHOOK_ACTOR_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$API_ECR_REPO:$IMAGE_TAG
       - cd ${CODEBUILD_SRC_DIR}/helm/ && helm upgrade -i ${RELEASE_NAME} ./demo-k8s-cicd --set .Values.applications.springboot.image.tag=$IMAGE_TAG --namespace $NAMESPACE
