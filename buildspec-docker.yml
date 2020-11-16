@@ -1,0 +1,29 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_ACCOUNT_ID: "835483671006"
+    API_ECR_REPO: "eks/api"
+    DDB__ECR_REPO: "eks/dynamo"
+    NODEJS_ECR_REPO: "eks/nodejs"
+    PYTHON_ECR_REPO: "eks/python"
+    WEBAPP_ECR_REPO: "eks/webapp"
+
+
+phases:
+  install: # Install AWS cli, kubectl (needed for Helm) and Helm
+    commands:
+      - "IMAGE_TAG=$(source ./tags.txt && echo ${Image_Tag})"
+      - "yum install -y awscli python3"
+      - echo "API Ecr repo is:" $API_ECR_REPO "DDB Ecr repo is:" $DDB_ECR_REPO "NodeJs Ecr repo is:" $NODEJS_ECR_REPO "Python Ecr repo is:"  $PYTHON_ECR_REPO "Webapp Ecr repo is:" $WEBAPP_ECR_REPO "Image tag is:" $IMAGE_TAG
+  pre_build: # Authenticate with ECR
+    commands:
+      - $(aws ecr get-login --no-include-email --region ${AWS_DEFAULT_REGION})
+  build: # Build Docker image, tag and push
+    commands:
+      - cd ${CODEBUILD_SRC_DIR}/microservices/api/ &&  docker build -t api:$IMAGE_TAG .
+      - docker tag api:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$API_ECR_REPO:$IMAGE_TAG
+  post_build: # Push the Docker image to the ECR
+    commands:
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$API_ECR_REPO:$IMAGE_TAG
+      
