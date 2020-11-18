@@ -1,13 +1,5 @@
 version: 0.2
 
-env:
-  variables:
-    AWS_ACCOUNT_ID: "835483671006"
-    RELEASE_NAME: "devrelease"
-    NAMESPACE: "development"
-    CLUSTER_NAME: "demo-k8s-cicid-cluster"
-
-
 phases:
   install: # Install AWS cli, kubectl (needed for Helm) and Helm
     commands:
