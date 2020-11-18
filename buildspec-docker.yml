@@ -1,15 +1,5 @@
 version: 0.2
 
-env:
-  variables:
-    AWS_ACCOUNT_ID: "835483671006"
-    API_ECR_REPO: "eks/api"
-    DDB__ECR_REPO: "eks/dynamo"
-    NODEJS_ECR_REPO: "eks/nodejs"
-    PYTHON_ECR_REPO: "eks/python"
-    WEBAPP_ECR_REPO: "eks/webapp"
-
-
 phases:
   install: # Install AWS cli, kubectl (needed for Helm) and Helm
     commands:
