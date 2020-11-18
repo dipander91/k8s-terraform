@@ -9,12 +9,22 @@ Purpose of this guide is to understand and implement the build and deploy mechan
 
 #### Highlevel Steps:
 
-1. Source checkout
+1. Create IAM roles(One for codepipeline and one for AWS codebuild)
+1. Add the codebuild IAM role to AWS_AUTH config map of Kubernetes, so that we can utilize this role to deploy to kubernetes
+1. Write buildspec files to build, push and then deploy to EKS.
+1. Create AWS codepipeline.
+
+#### AWS Codepipeline Stages
+
+1. Source Stage
 1. AWS codebuild stage to build and push docker images
 1. Manual approval satge before deploying to EKS
 1. Deploy to a namespace in kubernetes
 
-Architecture flow for reference:
+*Architecture flow for reference:*
 
 ![alt text](https://github.com/dipander91/k8s-terraform/blob/master/Architecture/Architecture-Codepipeline.png?raw=true)
 
+Terraform is used to create the pipeline, its stages and other required components like IAM roles/policies. The code for the pipeline terraform module is present at this location: https://github.com/dipander91/k8s-terraform/tree/master/terraform-provision/pipeline
+
+The main components for this pipeline to do the building of docker images and then pushing to AWS ECR and then deploying to helm is taken care with the help of AWS codebuild. For codebuild to work, we need to have buildspec file present at the root of our code repository. So you can find two buildspec files present at the root location of this repository, one for docker build and push (buildspec-docker.yml) and second for deployment to EKS(buildspec-deploy.yml) 
