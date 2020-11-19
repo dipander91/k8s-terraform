@@ -35,7 +35,7 @@ module eks_codebuild_role {
 }
 
 resource "aws_s3_bucket" "codepipeline_bucket" {
-  bucket = "eks-codepipeline-artifact-bucket"
+  bucket = var.artifact_s3_bucket
   acl    = "private"
 }
 
@@ -79,7 +79,7 @@ resource "aws_codepipeline" "ekspipeline" {
     location = aws_s3_bucket.codepipeline_bucket.bucket
     type     = "S3"
   }
-
+  tags = local.pipeline_tags
   stage {
     name = "Source"
 
@@ -179,7 +179,7 @@ resource "aws_codebuild_project" "eks_codebuild_project" {
 
   logs_config {
     cloudwatch_logs {
-      group_name  = "eks-docker-build-logs"
+      group_name  = var.docker_build_cwlogs_group
       stream_name = "eks"
     }
   }
@@ -216,7 +216,7 @@ resource "aws_codebuild_project" "eks_helm_deploy_project" {
 
   logs_config {
     cloudwatch_logs {
-      group_name  = "eks-helm-deploy-logs"
+      group_name  = var.helm_deploy_cwlogs_group
       stream_name = "eks"
     }
   }

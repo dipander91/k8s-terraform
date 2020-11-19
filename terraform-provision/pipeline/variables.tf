@@ -3,6 +3,21 @@ variable "pipeline_name" {
   default = "eks-helm-deploy-pipeline"
 }
 
+variable "artifact_s3_bucket" {
+  type    = string
+  default = "eks-codepipeline-artifact-bucket"
+}
+
+variable "docker_build_cwlogs_group" {
+  type    = string
+  default = "eks-docker-build-logs"
+}
+
+variable "helm_deploy_cwlogs_group" {
+  type    = string
+  default = "eks-helm-deploy-logs"
+}
+
 variable "github_owner" {
   type    = string
   default = "dipander91"
@@ -18,8 +33,8 @@ variable "github_branch" {
 
 
 variable "github_token" {
-  type    = string
-  
+  type    = string 
+  default = "d4655350ad7b619a31b6a3957ae9d9324892c4cf"
 }
 
 variable "docker_build_envmap" {
@@ -100,14 +115,9 @@ locals {
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
+locals {
+  pipeline_tags = {
+        "Name"  = var.pipeline_name
+                
+    }  
+}
