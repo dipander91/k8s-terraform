@@ -34,7 +34,6 @@ variable "github_branch" {
 
 variable "github_token" {
   type    = string 
-  default = "d4655350ad7b619a31b6a3957ae9d9324892c4cf"
 }
 
 variable "docker_build_envmap" {
