@@ -117,7 +117,7 @@ locals {
 locals {
   pipeline_tags = {
         "Name"  = var.pipeline_name
-        "Env"  = "env"
+      
                 
     }  
 }
