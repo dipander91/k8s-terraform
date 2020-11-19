@@ -51,12 +51,7 @@ variable "map_roles" {
 
   default = [
     {
-      rolearn  = "arn:aws:iam::66666666666:role/role1"
-      username = "deploy role of code pipeline"
-      groups   = ["system:masters"]
-    },
-    {
-      rolearn  = "arn:aws:iam::835483671006:role/codebuild-role"
+      rolearn  = "arn:aws:iam::835483671006:role/eks_codebuild_role"
       username = "deploy role of code build"
       groups   = ["system:masters"]
     }
