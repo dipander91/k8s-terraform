@@ -20,4 +20,4 @@ phases:
       - "aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $CLUSTER_NAME"
   build: # Deploy using helm
     commands:  
-      - cd ${CODEBUILD_SRC_DIR}/helm/ && helm upgrade -i ${RELEASE_NAME} ./demo-k8s-cicd --set .Values.applications.springboot.image.tag=$IMAGE_TAG --namespace $NAMESPACE
+      - cd ${CODEBUILD_SRC_DIR}/helm/ && helm upgrade -i ${RELEASE_NAME} ./demo-k8s-cicd --set applications.springboot.image.tag=$IMAGE_TAG --namespace $NAMESPACE
