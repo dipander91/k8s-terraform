@@ -33,7 +33,7 @@ applications:
       repository: 835483671006.dkr.ecr.eu-west-1.amazonaws.com/eks
       name: api
       type: springboot-ms-gateway
-      tag: v1.0
+      tag: 
       pullPolicy: Always 
     service:
       port: 8080

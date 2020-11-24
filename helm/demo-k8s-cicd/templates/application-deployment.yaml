@@ -1,7 +1,8 @@
 {{ $global := . }}
 {{ range .Values.applications -}}
 {{ $application := . }}
-
+{{- $tags := $.Files.Get "values-tags.yaml" | fromYaml }}
+{{ $imgname := $application.image.name -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -27,7 +28,7 @@ spec:
     spec:
       containers:
       - name: {{ template "demo-k8s-cicd.fullname" $global }}-{{ $application.image.name }}
-        image: "{{ $application.image.repository }}/{{ $application.image.name }}:{{ $application.image.tag }}"
+        image: "{{ $application.image.repository }}/{{ $application.image.name }}:{{ index $tags (printf "%s_image_tag" $application.image.name) }}"
         imagePullPolicy: {{ $application.image.pullPolicy }}
         ports:
         - containerPort: {{ $application.service.port }}

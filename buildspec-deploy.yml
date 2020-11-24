@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install: # Install AWS cli, kubectl (needed for Helm) and Helm
     commands:
-      - "IMAGE_TAG=$(source ./tags.txt && echo ${Image_Tag})"
+      - "API_IMAGE_TAG=$(source ./tags.txt && echo ${Api_Image_Tag})"
       - "yum install -y awscli python3"
       - "curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.9/2020-11-02/bin/darwin/amd64/aws-iam-authenticator"
       - "chmod +x ./aws-iam-authenticator"
@@ -14,10 +14,10 @@ phases:
       - "wget https://get.helm.sh/helm-v3.4.1-linux-amd64.tar.gz -O helm.tar.gz; tar -xzf helm.tar.gz"
       - "chmod +x ./linux-amd64/helm"
       - "mv ./linux-amd64/helm /usr/bin/helm"
-      - echo "Cluster name is:" ${CLUSTER_NAME} "Image tag is:" $IMAGE_TAG
+      - echo "Cluster name is:" ${CLUSTER_NAME} "Image tag is:" $API_IMAGE_TAG
   pre_build: # Add kubeconfig to access to EKS cluster
     commands:
       - "aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $CLUSTER_NAME"
   build: # Deploy using helm
     commands:  
-      - cd ${CODEBUILD_SRC_DIR}/helm/ && helm upgrade -i ${RELEASE_NAME} ./demo-k8s-cicd --set applications.springboot.image.tag=$IMAGE_TAG --namespace $NAMESPACE
+      - cd ${CODEBUILD_SRC_DIR}/helm/ && helm upgrade -i ${RELEASE_NAME} ./demo-k8s-cicd --values ./demo-k8s-cicd/values.yaml --values ./demo-k8s-cicd/values-tags.yaml --namespace $NAMESPACE
