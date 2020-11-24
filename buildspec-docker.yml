@@ -17,7 +17,6 @@ phases:
         python_image_tag: ${PYTHON_IMAGE_TAG}
         EOF
       - "cat ${CODEBUILD_SRC_DIR}/helm/demo-k8s-cicd/values-tags.yaml"
-      - "cat ${CODEBUILD_SRC_DIR}/test.yaml"
       - "yum install -y awscli python3"
       - echo "API Ecr repo is:" $API_ECR_REPO "DDB Ecr repo is:" $DDB_ECR_REPO "NodeJs Ecr repo is:" $NODEJS_ECR_REPO "Python Ecr repo is:"  $PYTHON_ECR_REPO "Webapp Ecr repo is:" $WEBAPP_ECR_REPO "Image tag is:" $API_IMAGE_TAG
   pre_build: # Authenticate with ECR
