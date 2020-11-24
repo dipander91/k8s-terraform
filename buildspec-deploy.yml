@@ -20,3 +20,7 @@ phases:
   build: # Deploy using helm
     commands:  
       - cd ${CODEBUILD_SRC_DIR}/helm/ && helm upgrade -i ${RELEASE_NAME} ./demo-k8s-cicd --values ./demo-k8s-cicd/values.yaml --values ./demo-k8s-cicd/values-tags.yaml --namespace $NAMESPACE
+artifacts:
+  files:
+    - '**/*'
+  name: helm-build-$(date +%Y-%m-%d)
