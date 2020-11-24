@@ -30,8 +30,8 @@ phases:
   post_build: # Push the Docker image to the ECR
     commands:
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$API_ECR_REPO:$API_IMAGE_TAG
-  artifacts:
-    files:
-      - '**/*'
-    name: docker-build-$(date +%Y-%m-%d)
+artifacts:
+  files:
+    - '**/*'
+  name: docker-build-$(date +%Y-%m-%d)
       
