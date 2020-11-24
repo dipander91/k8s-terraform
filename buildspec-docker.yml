@@ -4,6 +4,17 @@ phases:
   install: # Install AWS cli, kubectl (needed for Helm) and Helm
     commands:
       - "API_IMAGE_TAG=$(source ./tags.txt && echo ${Api_Image_Tag})"
+      - "DDB_IMAGE_TAG=$(source ./tags.txt && echo ${Dynamo_Image_Tag})"
+      - "WEBAPP_IMAGE_TAG=$(source ./tags.txt && echo ${Webapp_Image_Tag})"
+      - "NODEJS_IMAGE_TAG=$(source ./tags.txt && echo ${Nodejs_Image_Tag})"
+      - "PYTHON_IMAGE_TAG=$(source ./tags.txt && echo ${Python_Image_Tag})"
+      - "cat <<EOF > ${CODEBUILD_SRC_DIR}/helm/demo-k8s-cicd/values-tags.yaml
+        api_image_tag: ${API_IMAGE_TAG}
+        dynamo_image_tag: ${DDB_IMAGE_TAG}
+        webapp_image_tag: ${WEBAPP_IMAGE_TAG}
+        nodejs_image_tag: ${NODEJS_IMAGE_TAG}
+        python_image_tag: ${PYTHON_IMAGE_TAG}
+        EOF"
       - "yum install -y awscli python3"
       - echo "API Ecr repo is:" $API_ECR_REPO "DDB Ecr repo is:" $DDB_ECR_REPO "NodeJs Ecr repo is:" $NODEJS_ECR_REPO "Python Ecr repo is:"  $PYTHON_ECR_REPO "Webapp Ecr repo is:" $WEBAPP_ECR_REPO "Image tag is:" $API_IMAGE_TAG
   pre_build: # Authenticate with ECR
