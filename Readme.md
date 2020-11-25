@@ -23,7 +23,7 @@ Purpose of this guide is to understand and implement the build and deploy mechan
 
 *Architecture flow for reference:*
 
-![alt text](https://github.com/dipander91/k8s-terraform/blob/master/Architecture/Architecture-Codepipeline.png?raw=true)
+![alt text](https://github.com/dipander91/k8s-terraform/blob/master/Architecture/Architecture-Codepipeline_updated.png?raw=true)
 
 For this guide, Terraform is used to create the pipeline, its stages and other required components like IAM roles/policies. The code for the pipeline terraform module is present at this location: https://github.com/dipander91/k8s-terraform/tree/master/terraform-provision/pipeline
 
