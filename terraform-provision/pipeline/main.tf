@@ -146,7 +146,7 @@ resource "aws_codepipeline" "ekspipeline" {
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
-      input_artifacts  = ["source_output"]
+      input_artifacts  = ["build_output"]
       output_artifacts = ["helm_output"]
       version          = "1"
 
