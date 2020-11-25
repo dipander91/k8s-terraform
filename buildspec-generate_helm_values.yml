@@ -24,9 +24,9 @@ phases:
       
   post_build: # Push the Docker image to the ECR
     commands:
+      - git remote add origin git@github.com:dipander91/helm-repo.git
       - git config --global user.email dipander.goyal@gmail.com
       - git config --global user.name dipander91
-      - git remote add origin git@github.com:dipander91/helm-repo.git
       - git config --global user.password 6162ffeb3c1e6b29a148daac3f3e95d10564dadc
       - cd ${CODEBUILD_SRC_DIR}/${GITHUB_HELM_REPO_NAME}/${HELM_CHART_NAME}/ &&  git add ${VALUES_FILE_NAME} && git commit -m "Updated values file" && git push origin master
 artifacts:
