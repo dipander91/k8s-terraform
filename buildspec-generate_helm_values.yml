@@ -1,0 +1,26 @@
+version: 0.2
+
+phases:
+  install: # Dynamically generate helm values file
+    commands:
+      - "API_IMAGE_TAG=$(source ./tags.txt && echo ${Api_Image_Tag})"
+      - "DDB_IMAGE_TAG=$(source ./tags.txt && echo ${Dynamo_Image_Tag})"
+      - "WEBAPP_IMAGE_TAG=$(source ./tags.txt && echo ${Webapp_Image_Tag})"
+      - "NODEJS_IMAGE_TAG=$(source ./tags.txt && echo ${Nodejs_Image_Tag})"
+      - "PYTHON_IMAGE_TAG=$(source ./tags.txt && echo ${Python_Image_Tag})"
+      
+  build: # Generate values file
+    commands:
+      - |
+        cat <<EOF > ${CODEBUILD_SRC_DIR}/helm/demo-k8s-cicd/values-tags.yaml
+        api_image_tag: ${API_IMAGE_TAG}
+        dynamo_image_tag: ${DDB_IMAGE_TAG}
+        webapp_image_tag: ${WEBAPP_IMAGE_TAG}
+        nodejs_image_tag: ${NODEJS_IMAGE_TAG}
+        python_image_tag: ${PYTHON_IMAGE_TAG}
+        EOF
+artifacts:
+  files:
+    - '**/*'
+  name: helm-values-$(date +%Y-%m-%d)
+      
