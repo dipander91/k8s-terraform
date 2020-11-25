@@ -23,7 +23,9 @@ phases:
       
   post_build: # Push the Docker image to the ECR
     commands:
-      - cd ${CODEBUILD_SRC_DIR}/${GITHUB_HELM_REPO_NAME}/${HELM_CHART_NAME}/ &&  git add ${VALUES_FILE_NAME} && git commit -m "Updated values file" && git push
+      - cd ${CODEBUILD_SRC_DIR}/${GITHUB_HELM_REPO_NAME}/${HELM_CHART_NAME}/ &&  git add ${VALUES_FILE_NAME}
+      - cd ${CODEBUILD_SRC_DIR}/${GITHUB_HELM_REPO_NAME}/${HELM_CHART_NAME}/ && git commit -m "Updated values file" && git push
+      - cd ${CODEBUILD_SRC_DIR}/${GITHUB_HELM_REPO_NAME}/${HELM_CHART_NAME}/ && git push
 artifacts:
   files:
     - '**/*'
