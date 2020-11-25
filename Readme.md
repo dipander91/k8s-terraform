@@ -16,10 +16,18 @@ Purpose of this guide is to understand and implement the build and deploy mechan
 
 #### AWS Codepipeline Stages
 
+###### CI Stages:
+
 1. Source Stage
 1. AWS codebuild stage to build and push docker images
-1. Manual approval satge before deploying to EKS
-1. Deploy to a namespace in kubernetes
+1. AWS codebuild stage to dynamically generate helm values file and commit to helm repo
+
+###### CD Stages:
+
+1. Source Stage
+1. AWS codebuild stage to deploy to eks using helm
+1. Manual approval satge if you want to deploy to multiple namespaces/clusters
+1. Deploy to next namespace/cluster in kubernetes
 
 *Architecture flow for reference:*
 
