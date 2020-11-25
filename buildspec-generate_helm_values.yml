@@ -11,7 +11,7 @@ phases:
       
   build: # Generate values file
     commands:
-      - git clone git@github.com:dipander91/helm-repo.git
+      - git clone ${GITHUB_HELM_REPO_URL}
       - |
         cat <<EOF > ${CODEBUILD_SRC_DIR}/${GITHUB_HELM_REPO_NAME}/${HELM_CHART_NAME}/${VALUES_FILE_NAME}
         api_image_tag: ${API_IMAGE_TAG}
@@ -26,8 +26,9 @@ phases:
     commands:
       - git config --global user.email dipander.goyal@gmail.com
       - git config --global user.name dipander91
+      - git remote add origin git@github.com:dipander91/helm-repo.git
       - git config --global user.password 6162ffeb3c1e6b29a148daac3f3e95d10564dadc
-      - cd ${CODEBUILD_SRC_DIR}/${GITHUB_HELM_REPO_NAME}/${HELM_CHART_NAME}/ &&  git add ${VALUES_FILE_NAME} && git commit -m "Updated values file" && git push 
+      - cd ${CODEBUILD_SRC_DIR}/${GITHUB_HELM_REPO_NAME}/${HELM_CHART_NAME}/ &&  git add ${VALUES_FILE_NAME} && git commit -m "Updated values file" && git push origin master
 artifacts:
   files:
     - '**/*'
