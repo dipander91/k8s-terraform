@@ -11,16 +11,22 @@ phases:
       
   build: # Generate values file
     commands:
+      - git clone ${GITHUB_HELM_REPO_URL}
       - |
-        cat <<EOF > ${CODEBUILD_SRC_DIR}/helm/demo-k8s-cicd/values-tags.yaml
+        cat <<EOF > ${CODEBUILD_SRC_DIR}/${GITHUB_HELM_REPO_NAME}/${HELM_CHART_NAME}/${VALUES_FILE_NAME}
         api_image_tag: ${API_IMAGE_TAG}
         dynamo_image_tag: ${DDB_IMAGE_TAG}
         webapp_image_tag: ${WEBAPP_IMAGE_TAG}
         nodejs_image_tag: ${NODEJS_IMAGE_TAG}
         python_image_tag: ${PYTHON_IMAGE_TAG}
         EOF
+      
+  post_build: # Push the Docker image to the ECR
+    commands:
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$API_ECR_REPO:$API_IMAGE_TAG
+      - cd ${CODEBUILD_SRC_DIR}/${GITHUB_HELM_REPO_NAME}/${HELM_CHART_NAME}/ &&  git add ${VALUES_FILE_NAME} && git commit -m "Updated values file" && git push
 artifacts:
   files:
     - '**/*'
-  name: helm-values-$(date +%Y-%m-%d)
+  name: docker-helm-values-$(date +%Y-%m-%d)
       
