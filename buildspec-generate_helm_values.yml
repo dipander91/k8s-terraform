@@ -23,7 +23,6 @@ phases:
       
   post_build: # Push the Docker image to the ECR
     commands:
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$API_ECR_REPO:$API_IMAGE_TAG
       - cd ${CODEBUILD_SRC_DIR}/${GITHUB_HELM_REPO_NAME}/${HELM_CHART_NAME}/ &&  git add ${VALUES_FILE_NAME} && git commit -m "Updated values file" && git push
 artifacts:
   files:
