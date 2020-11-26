@@ -1,5 +1,17 @@
 data "aws_caller_identity" "current" {}
 
+resource "random_string" "webhook_secret_random" {
+  length  = 16
+  special = false
+}
+
+resource "aws_ssm_parameter" "github_token_param" {
+  name        = "/eks/github_token_param"
+  description = "parameter to store github token"
+  type        = "SecureString"
+  value       = var.github_token
+}
+
 module eks-pipeline-policy {
   source = "../../terraform-modules/terraform-module-aws-iam-policy/"
 
@@ -47,7 +59,7 @@ resource "aws_codepipeline_webhook" "webhook" {
   target_pipeline = aws_codepipeline.ekspipeline.name
 
   authentication_configuration {
-    secret_token = var.github_token
+    secret_token = local.webhook_secret
   }
 
   filter {
@@ -62,9 +74,9 @@ resource "github_repository_webhook" "aws_codepipeline" {
 
   configuration {
     url          = aws_codepipeline_webhook.webhook.url
-    content_type = "form"
+    content_type = "json"
     insecure_ssl = "true"
-    secret       = var.github_token
+    secret       = local.webhook_secret
   }
 
   events = ["push"]
@@ -99,6 +111,7 @@ resource "aws_codepipeline" "ekspipeline" {
       }
     }
   }
+  
   stage {
     name = "DockerBuildAndPush"
 
@@ -123,36 +136,20 @@ resource "aws_codepipeline" "ekspipeline" {
   }
 
   stage {
-    name = "ManualApprovalStage"
+    name = "GenerateHelmValuesFile"
 
     action {
-      name     = "ManualApprovalStage"
-      category = "Approval"
-      owner    = "AWS"
-      provider = "Manual"
-      version  = "1"
-
-      configuration = {
-        "CustomData" : "Approval to deploy to development namespace",
-      }
-    }
-  }
-
-  stage {
-    name = "HelmDeployStage"
-
-    action {
-      name             = "HelmDeployStage"
+      name             = "GenerateHelmValuesFile"
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
       input_artifacts  = ["build_output"]
-      output_artifacts = ["helm_output"]
+      output_artifacts = ["helm_values_output"]
       version          = "1"
 
       configuration = {
-        ProjectName = aws_codebuild_project.eks_helm_deploy_project.name
-        EnvironmentVariables = jsonencode(local.helm_deploy_env_vars)
+        ProjectName = aws_codebuild_project.generate_helm_values_project.name
+        EnvironmentVariables = jsonencode(local.helm_values_env_vars)
       }
     }
   }
@@ -197,8 +194,8 @@ resource "aws_codebuild_project" "eks_codebuild_project" {
 
 }
 
-resource "aws_codebuild_project" "eks_helm_deploy_project" {
-  name         = "eks-helm-deploy-project"
+resource "aws_codebuild_project" "generate_helm_values_project" {
+  name         = "eks-helm-generate-values-project"
   description  = "To release using helm"
   service_role = module.eks_codebuild_role.iam_role_arn
 
@@ -216,14 +213,14 @@ resource "aws_codebuild_project" "eks_helm_deploy_project" {
 
   logs_config {
     cloudwatch_logs {
-      group_name  = var.helm_deploy_cwlogs_group
+      group_name  = var.helm_values_cwlogs_group
       stream_name = "eks"
     }
   }
 
   source {
     type      = "CODEPIPELINE"
-    buildspec = "buildspec-deploy.yml"
+    buildspec = "buildspec-generate_helm_values.yml"
     auth {
       type = "OAUTH"
     }
